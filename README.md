@@ -4,7 +4,7 @@
 
 ### Pure, typed, TA-Lib-correct primitives for technical analysis & quantitative finance
 
-*`numpy` / `pandas` / `scipy` in — `pd.Series`, frozen dataclasses & floats out.*
+*`numpy` / `pandas` / `scipy` in, `pd.Series` / frozen dataclasses / floats out.*
 
 ![Python](https://img.shields.io/badge/Python-3.12+-3776AB?logo=python&logoColor=white)
 ![NumPy](https://img.shields.io/badge/NumPy-2.x-013243?logo=numpy&logoColor=white)
@@ -21,34 +21,33 @@
 
 ---
 
-> **Pure library — no global state, no I/O.** No module reads `.env`, a database, the network or
+> **Pure library: no global state, no I/O.** No module reads `.env`, a database, the network or
 > disk. Functions take a `pd.Series` / `pd.DataFrame`, validate it, and return **new** objects
-> (`pd.Series`, frozen dataclasses, `float`) — your inputs are never mutated. You own the I/O and the
+> (`pd.Series`, frozen dataclasses, `float`). Your inputs are never mutated. You own the I/O and the
 > thresholds (RSI/ADX/Bollinger). That makes every function deterministic, composable and trivially
 > testable.
 
 AlphaMetrics is a self-contained calculation core: technical indicators, risk & performance metrics,
-time-series models, option pricing, portfolio optimization and a long-only backtest engine — each a
-small, typed, side-effect-free function. Extracted from the `alphametrics` module of NarrativeAlpha
-into a standalone repository.
+time-series models, option pricing, portfolio optimization and a long-only backtest engine, each a
+small, typed, side-effect-free function.
 
 ## 🎯 What it is / What it's NOT
 
 | ✅ What it **is** | ❌ What it's **NOT** |
 |---|---|
-| A **pure calculation library** (numpy/pandas/scipy) | A data fetcher — it does **no** network/disk I/O |
+| A **pure calculation library** (numpy/pandas/scipy) | A data fetcher: it does **no** network/disk I/O |
 | **Deterministic & type-safe** (frozen dataclasses) | A live trading bot or order router |
 | **Numerically correct** (Wilder vs EMA, TA-Lib-checked) | An investment recommendation engine |
 | A **composable toolkit** you wire into your own pipeline | A framework that owns your data or config |
 
 ## 🗺️ Architecture
 
-`core` provides the shared primitives — validation, return types, smoothing and float64 coercion —
+`core` provides the shared primitives (validation, return types, smoothing and float64 coercion)
 that every domain subpackage builds on. There is **no** cross-coupling between domains.
 
 ```mermaid
 flowchart TD
-    subgraph CORE["🧱 core — shared primitives"]
+    subgraph CORE["🧱 core: shared primitives"]
         direction LR
         V[validation]:::c
         T[types]:::c
@@ -86,7 +85,7 @@ flowchart LR
 
 ## 🧩 Use cases
 
-> All snippets below run as a sequence — this first block sets up the sample data they share.
+> All snippets below run as a sequence: this first block sets up the sample data they share.
 > Imports use the **flat scheme** (`from <subpackage>.<module> import ...`); see
 > [Project layout & imports](#project-layout--imports).
 
@@ -94,7 +93,7 @@ flowchart LR
 import numpy as np
 import pandas as pd
 
-# Synthetic OHLCV — swap in your own data (validate_ohlcv enforces high >= open/low/close)
+# Synthetic OHLCV: swap in your own data (validate_ohlcv enforces high >= open/low/close)
 rng = np.random.default_rng(42)
 n = 250
 idx = pd.date_range("2024-01-01", periods=n, freq="B")
@@ -171,7 +170,7 @@ bt = backtest_signals(px["close"], entries, exits, init_cash=10_000, cost_model=
 size = position_size(kelly_discrete(win_rate=0.55, avg_win=1.8, avg_loss=1.0))   # half-Kelly, capped 25%
 ```
 
-### ⏳ 4. Time-series models — ARIMA / GARCH
+### ⏳ 4. Time-series models: ARIMA / GARCH
 
 Volatility & mean models. These live in `stats.timeseries` and require the optional **`stats`** extra
 (`statsmodels`, `arch`, `pmdarima`); each raises a clear `ImportError` if the dependency is missing.
@@ -228,7 +227,7 @@ Quick reference. Full formulas, edge cases and TA-Lib validation notes live in
 The most common TA bug is confusing **Wilder smoothing** (`α = 1/N`, used by RSI/ATR/ADX) with the
 **standard EMA** (`α = 2/(N+1)`). AlphaMetrics centralizes both in `core/smoothing.py` and uses each
 deliberately, so values match TA-Lib where a reference exists. All inputs pass through centralized
-validation — functions raise `ValueError`/`TypeError` on bad data rather than silently returning `NaN`
+validation. Functions raise `ValueError`/`TypeError` on bad data rather than silently returning `NaN`
 (NaNs in output only ever come from an indicator's natural warm-up period).
 
 ---
@@ -259,7 +258,7 @@ pip install -r requirements-dev.txt    # + dev tooling (pytest, black, ruff, myp
 ```
 src/         core · trend · volatility · risk · stats · quant · systems   ← Sources Root
 tests/       pytest suite (mirrors src/), fixtures in conftest.py
-docs/        AlphaMetrics.md — full reference
+docs/        AlphaMetrics.md  (full reference)
 ```
 
 `src/` is a **flat layout**: each subpackage is a top-level importable package. Import directly:
@@ -303,9 +302,9 @@ mypy src               # strict type checking
 
 ## Documentation
 
-Full reference — formulas, edge cases, Wilder-vs-EMA deep dive, TA-Lib validation —
+Full reference (formulas, edge cases, Wilder-vs-EMA deep dive, TA-Lib validation)
 in [`docs/AlphaMetrics.md`](docs/AlphaMetrics.md).
 
 ## License
 
-To be defined — no `LICENSE` file yet. Add one before publishing or sharing.
+To be defined: no `LICENSE` file yet. Add one before publishing or sharing.
