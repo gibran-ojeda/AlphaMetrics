@@ -1,0 +1,7 @@
+# Dev tooling - runtime deps are pinned in requirements.txt
+-r requirements.txt
+black==26.5.1
+mypy==2.1.0
+pytest==9.0.3
+pytest-cov==7.1.0
+ruff==0.15.16
